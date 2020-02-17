@@ -9,15 +9,13 @@ public class FlashLight : MonoBehaviour
     [SerializeField]
     private float maxBatteryLife, lightDrain;
 
-    [SerializeField]
-    private Image batteryIndicator;
-
     private float curBatteryLife;
     private bool isOn = true;
 
     private void Start(){
         // заполняем заряд максимальным значением на старте
         curBatteryLife = maxBatteryLife;
+        flashLight.enabled = true;
     }
 
     private void Update(){
@@ -30,7 +28,6 @@ public class FlashLight : MonoBehaviour
                 curBatteryLife -= lightDrain * Time.deltaTime;
                 flashLight.intensity = curBatteryLife;
                 Vector3 batterySize = new Vector3(curBatteryLife / maxBatteryLife,1,1);
-                batteryIndicator.transform.localScale = batterySize;
             }else{
                 // если заряд вышел, выключить фонарик
                 curBatteryLife = 0;

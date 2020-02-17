@@ -11,14 +11,18 @@ public class InteractionManager : MonoBehaviour{
     private Image handImage;
 
     [SerializeField]
-    private GameObject paperPanel;
+    private PaperRead paperReadPanel;
 
     [SerializeField]
-    private PointLight light;
+    private new PointLight light;
 
     [SerializeField]
-    private GameObject key, door;
+    private OpenDoor openDoor;
+
+    [SerializeField]
+    private GameObject key, candleLight;
     private bool hasKey = false;
+    private int paperCount = 0;
     
     [SerializeField]
     private float interactDistance;
@@ -33,7 +37,7 @@ public class InteractionManager : MonoBehaviour{
         // отключаем руку
         handImage.gameObject.SetActive(false);
         // отключаем панель с запиской
-        paperPanel.SetActive(false);
+        paperReadPanel.gameObject.SetActive(false);
     }
 
 
@@ -48,7 +52,7 @@ public class InteractionManager : MonoBehaviour{
             }
             // Debug.Log("Ray hit object: " + raycastHit.transform.name);
             // если нажата клавиша Е
-            if(Input.GetKeyDown(KeyCode.E)){
+            if (Input.GetKeyDown(KeyCode.E)){
                 // если смотрю на батарейки
                 if(raycastHit.transform.tag == "Battery"){
                     // пополнить заряд фонарика
@@ -56,12 +60,16 @@ public class InteractionManager : MonoBehaviour{
                     // уничтожить батарейки
                     Destroy(raycastHit.transform.gameObject);
                 }
+
                 // если смотрю на записку
                 if(raycastHit.transform.tag == "Paper"){
                     // включаем панель
-                    paperPanel.SetActive(true);
+                    paperCount++;
+                    paperReadPanel.gameObject.SetActive(true);
+                    paperReadPanel.PaperText(paperCount);
+                    Destroy(raycastHit.transform.gameObject);
                     // отключаем игрока
-                    playerController.enabled = false;
+                    //playerController.enabled = false;
                 }
                 // если смотрю на ключ
                 if(raycastHit.transform.tag == "Key"){
@@ -72,24 +80,32 @@ public class InteractionManager : MonoBehaviour{
                 }
                 // если смотрю на дверь
                 if(raycastHit.transform.tag == "Door"){
-                    if(hasKey == false){
-                        // проиграть звук закрытой двери
-                        Debug.Log("Дверь закрыта");
-                    }else{
-                        // открыть дверь
-                        Debug.Log("Дверь открыта");
-                        // проиграть звук открытия двери
-
+                    if(paperCount==3)
+                    {
+                        openDoor.ChangeOpenDoor();
+                        Debug.Log("Вы открыли дверь!");
                     }
+                    else
+                    {
+                        Debug.Log("Прочтите еще записки!");
+                    }
+                    //if(hasKey == false){
+                    //    // проиграть звук закрытой двери
+                    //    Debug.Log("Дверь закрыта");
+                    //}else{
+                    //    // открыть дверь
+                    //    Debug.Log("Дверь открыта");
+                    //    // проиграть звук открытия двери
+                    //}
                 }
                 if(raycastHit.transform.tag == "CandleLight")
                 {
                     light.EnableLight();
                 }
             }
-            if(Input.GetKeyDown(KeyCode.Escape)){
+            if (Input.GetKeyDown(KeyCode.Z)){
                 // выключаем панель
-                paperPanel.SetActive(false);
+                paperReadPanel.gameObject.SetActive(false);
                 // включаем игрока
                 playerController.enabled = true;
             }
